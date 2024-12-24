@@ -1,24 +1,35 @@
 import { useRef, useContext } from "react";
 import UserContext from "../context/UserContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom"; //import Link from react router
 
-import { Link } from "react-router-dom"; //import Link from react router
-
-const SignIn = () => {
-  const { actions } = useContext(UserContext);
+const UserSignIn = () => {
+  const { actions } = useContext(UserContext); //}{actions}
   //console.log(actions);
+  const navigate = useNavigate();
   // State
   const emailAddress = useRef(null);
   const password = useRef(null);
-
-  const navigate = useNavigate();
+  const [errors, setErrors] = useState([]);
 
   // Event Handlers
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    //actions.
-    actions.signIn(emailAddress.current.value, password.current.value);
-    navigate("/home");
+    let from = "/authenticated";
+    const credentials = {
+      emailAddress: emailAddress.current.value,
+      password: password.current.value,
+    };
+    try {
+      const user = await actions.signIn(credentials);
+      if (user) {
+        navigate(from);
+      } else {
+        setErrors(["Sign-in was unsuccessful"]);
+      }
+    } catch (error) {
+      console.log(error);
+      navigate("/error");
+    }
   };
 
   const handleCancel = (event) => {
@@ -30,6 +41,7 @@ const SignIn = () => {
     <main>
       <div className="form--centered">
         <h2>Sign In</h2>
+        {/* <ErrorsDisplay errors={errors} />*/}
         <form onSubmit={handleSubmit}>
           <input
             id="emailAddress"
@@ -60,4 +72,4 @@ const SignIn = () => {
     </main>
   );
 };
-export default SignIn;
+export default UserSignIn;

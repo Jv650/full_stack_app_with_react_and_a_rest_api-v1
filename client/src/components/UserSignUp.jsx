@@ -3,11 +3,10 @@ import { useContext, useRef, useState } from "react";
 import UserContext from "../context/UserContext";
 import { api } from "../utils/apiHelper";
 
-const SignUp = () => {
+const UserSignUp = () => {
   //hooks need to be at top of component
-  const { actions } = useContext(UserContext);
+  const actions = useContext(UserContext); //{actions}
   const navigate = useNavigate();
-
   // State
   const firstName = useRef(null);
   const lastName = useRef(null);
@@ -18,7 +17,6 @@ const SignUp = () => {
   // event handlers
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     const user = {
       firstName: firstName.current.value,
       lastName: lastName.current.value,
@@ -27,20 +25,23 @@ const SignUp = () => {
     };
 
     try {
-      const response = await api("/users", "POST", user); //first arg is URL path, second arg is method, and lastly the data (user) tat will be included in the body
+      const response = await api("/users", "POST", user, null); //first arg is URL path, second arg is method, and lastly the data (user) tat will be included in the body
       if (response.status === 201) {
         console.log(
           `${user.firstName} is successfully signed up and authenticated!`
         );
-        await //actions.
-        actions.signIn(user);
+        await actions.signIn(user);
         navigate("/authenticated");
+        // const userSignedIn = await actions.signIn(user); //actions
+        // if (userSignedIn) {
+        //   navigate("/home"); // navigate("/authenticated");
+        // }
       } else if (response.status === 400) {
         //will return errors in browser
         const data = await response.json();
         setErrors(data.errors);
       } else {
-        throw new Error();
+        throw new Error("Network response failed " + response.status);
       }
     } catch (error) {
       console.log(error);
@@ -96,4 +97,4 @@ const SignUp = () => {
     </div>
   );
 };
-export default SignUp;
+export default UserSignUp;

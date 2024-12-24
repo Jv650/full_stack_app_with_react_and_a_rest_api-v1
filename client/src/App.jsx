@@ -1,32 +1,38 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 //import UserContext from "./context/UserContext";
 
 //App Components
 import Header from "./components/Header";
 import Courses from "./components/Courses";
 import CourseDetail from "./components/CourseDetail";
-import SignIn from "./components/SignIn";
-import SignUp from "./components/SignUp";
-import SignOut from "./components/SignOut";
-//import UpdateCourse from "./components/UpdateCourse";
+import UserSignIn from "./components/UserSignIn";
+import UserSignUp from "./components/UserSignUp";
+import UserSignOut from "./components/UserSignOut";
+import UserContext from "./context/UserContext";
+import CreateCourse from "./components/CreateCourse";
+import UpdateCourse from "./components/UpdateCourse";
+import PrivateRoute from "./components/PrivateRoute";
+import Authenticated from "./components/Autheticated";
 
 function App() {
   return (
-    <BrowserRouter>
-      <div>
-        <Header />
-        <Routes>
-          <Route path="/home" element={<Courses />} />
-          <Route path="/courses/:id" element={<CourseDetail />} />
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/signout" element={<SignOut />} />
-          {/*<Route path="/updatecourse" element={<UpdateCourse />} />*/}
-        </Routes>
-      </div>
-    </BrowserRouter>
+    <div>
+      {console.log(UserContext)}
+      <Header />
+      <Routes>
+        <Route path="/home" element={<Courses />} />
+        <Route path="/courses/:id" element={<CourseDetail />} />
+        <Route path="/signin" element={<UserSignIn />} />
+        <Route path="/signup" element={<UserSignUp />} />
+        <Route path="/signout" element={<UserSignOut />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="authenticated" element={<Authenticated />} />
+          <Route path="/updatecourse" element={<UpdateCourse />} />
+          <Route path="/createcourse" element={<CreateCourse />} />
+        </Route>
+      </Routes>
+    </div>
   );
 }
 
 export default App;
-//{console.log(UserContext)}
