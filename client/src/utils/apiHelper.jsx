@@ -1,22 +1,42 @@
 //export - dont forget to export so yu can use this function in other components
 //the api function needs to know the URL and fetch method to make call
-export const api = (path, method = "GET", body = null, credentials = null) => {
-  const url = "http://localhost:5000/api" + path;
+export const api = async (
+  path,
+  method = "GET",
+  body = null,
+  credentials = null
+) => {
+  const url = `http://localhost:5000/api${path}`;
 
   const options = {
-    method: method,
-    headers: {},
+    method: method, //http method (get, post, put, delete)
+    headers: {}, //headers will be populated dynamically
   };
+  //add body to the request if provided for POSt and PUT
   if (body) {
     options.body = JSON.stringify(body);
     options.headers["Content-Type"] = "application/json; charset=utf-8";
   }
+  //add authroization header if credentials are provided
   if (credentials) {
     const encodedCredentials = btoa(
-      `${credentials.firstName}:${credentials.lastName}:${credentials.emailAddress}:${credentials.password}`
+      `${credentials.emailAddress}:${credentials.password}`
     );
     options.headers.Authorization = `Basic ${encodedCredentials}`;
   }
-  //api func wil return the fetch method, taking in url and options
-  return fetch(url, options);
+  try {
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || response.status);
+    }
+    if (response.status === 204) {
+      return null;
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(`API error: ${error.message}`);
+    throw error;
+  }
 };

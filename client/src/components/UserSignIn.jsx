@@ -1,6 +1,92 @@
-import { useRef, useContext } from "react";
-import UserContext from "../context/UserContext";
-import { useNavigate, Link } from "react-router-dom"; //import Link from react router
+import { useRef, useContext, useState } from "react";
+import { UserContext } from "../context/UserContext";
+import { api } from "../utils/apiHelper";
+import { useNavigate, Link, useLocation } from "react-router-dom"; //import Link from react router
+
+// const UserSignIn = () => {
+//   const { actions } = useContext(UserContext); //}{actions}
+//   //console.log(actions);
+//   const navigate = useNavigate();
+//   const location = useLocation();
+//   // State
+//   const emailAddress = useRef(null);
+//   const password = useRef(null);
+//   const [errors, setErrors] = useState([]);
+
+//   // Event Handlers
+//   const handleSubmit = async (event) => {
+//     event.preventDefault();
+//     let from = "/authenticated"; //defaule reirection
+//     if (location.state?.from) {
+//       //redirect to prrevious location if available
+//       from = location.state.from;
+//       //navigate(from, { replace: true });
+//     }
+
+//     const credentials = {
+//       emailAddress: emailAddress.current.value,
+//       password: password.current.value,
+//     };
+
+//     try {
+//       const user = await api("/users", "GET", null, credentials);
+//       if (user) {
+//         navigate(from);
+//       } else {
+//         setErrors(["Sign-in was unsuccessful"]);
+//       }
+//     } catch (error) {
+//       console.error(error);
+//       setErrors(["Error occurred during sign-in"]);
+//     }
+//   };
+
+//   const handleCancel = (event) => {
+//     event.preventDefault();
+//     navigate("/");
+//   };
+
+//   // const UserSignIn = () => {
+//   //   const { actions } = useContext(UserContext);
+
+//   //   const navigate = useNavigate();
+//   //   const location = useLocation();
+
+//   //   // State
+//   //   const emailAddress = useRef(null);
+//   //   const password = useRef(null);
+//   //   const [errors, setErrors] = useState([]);
+
+//   //   // Event Handlers
+//   //   const handleSubmit = async (event) => {
+//   //     event.preventDefault();
+//   //     let from = "/authenticated";
+//   //     if (location.state) {
+//   //       from = location.state.from;
+//   //     }
+
+//   //     const credentials = {
+//   //       emailAddress: emailAddress.current.value,
+//   //       password: password.current.value,
+//   //     };
+
+//   //     try {
+//   //       const user = await actions.signIn(credentials);
+//   //       if (user) {
+//   //         navigate(from);
+//   //       } else {
+//   //         setErrors(["Sign-in was unsuccessful"]);
+//   //       }
+//   //     } catch (error) {
+//   //       //console.log(error);
+//   //       //navigate("/error");
+//   //     }
+//   //   };
+
+//   //   const handleCancel = (event) => {
+//   //     event.preventDefault();
+//   //     navigate("/");
+//   //   };
 
 const UserSignIn = () => {
   const { actions } = useContext(UserContext); //}{actions}
@@ -34,19 +120,26 @@ const UserSignIn = () => {
 
   const handleCancel = (event) => {
     event.preventDefault();
-    navigate("/home");
+    navigate("/");
   };
 
   return (
     <main>
       <div className="form--centered">
         <h2>Sign In</h2>
-        {/* <ErrorsDisplay errors={errors} />*/}
+        {errors.length > 0 && (
+          <div className="errors">
+            {errors.map((error, index) => (
+              <p key={index}>{error}</p>
+            ))}
+            {/* <ErrorsDisplay errors={errors} /> */}
+          </div>
+        )}
         <form onSubmit={handleSubmit}>
           <input
             id="emailAddress"
             required
-            type="text"
+            type="email"
             ref={emailAddress}
             placeholder="Email Address"
           />

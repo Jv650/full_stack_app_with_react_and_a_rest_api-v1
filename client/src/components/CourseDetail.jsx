@@ -1,40 +1,50 @@
 import { useState, useEffect } from "react";
 import Markdown from "react-markdown";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom"; //import Link from react router
+import { api } from "../utils/apiHelper";
 
 const CourseDetail = () => {
-  const [course, setCourse] = useState([]);
+  const [course, setCourse] = useState([{}]); //empty object bc its expecting props such as title, description, etc.
   const { id } = useParams(); //get course id from the api
+  const navigate = useNavigate();
 
   //fetch /api/courses/:id from API
   useEffect(() => {
-    fetch(`/api/courses/${id}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch course");
-        }
-        return response.json(); //converts res to JSON
-      })
+    api(`/courses/${id}`)
       .then((data) => setCourse(data)) //update courses state
       .catch((error) => console.error("Error loading courses ", error));
-  }, []); //run once when component loads
+  }, [id]); //run once when component loads
+
+  //delete course function
+  const handleDelete = async () => {
+    try {
+      const response = await api(`/courses/${id}`, "DELETE");
+      if (response.ok) {
+        navigate("/");
+      } else {
+        throw new Error("Failed to delete the course");
+      }
+    } catch (error) {
+      console.error("Error deleting the course", error);
+    }
+  };
 
   return (
     <div className="actions--bar">
       <div className="wrap">
-        <Link to={`/courses/${course.id}/update`}>
-          <a className="button" href="update-course.html">
-            Update Course
-          </a>
+        <Link to={`/updatecourse/${id}`}>
+          <a className="button">Update Course</a>
         </Link>
-        <a className="button" href="#">
+        <a
+          className="button"
+          onClick={handleDelete}
+          /*EDIT onClick={"DELETE"}*/
+        >
           Delete Course
         </a>
-        <Link to="/courses">
-          <a className="button button-secondary" href="index.html">
-            Return to List
-          </a>
+        <Link to="/">
+          <a className="button button-secondary">Return to List</a>
         </Link>
       </div>
 

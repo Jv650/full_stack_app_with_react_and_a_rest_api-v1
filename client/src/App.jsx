@@ -8,7 +8,7 @@ import CourseDetail from "./components/CourseDetail";
 import UserSignIn from "./components/UserSignIn";
 import UserSignUp from "./components/UserSignUp";
 import UserSignOut from "./components/UserSignOut";
-import UserContext from "./context/UserContext";
+import { UserContext } from "./context/UserContext";
 import CreateCourse from "./components/CreateCourse";
 import UpdateCourse from "./components/UpdateCourse";
 import PrivateRoute from "./components/PrivateRoute";
@@ -20,14 +20,14 @@ function App() {
       {console.log(UserContext)}
       <Header />
       <Routes>
-        <Route path="/home" element={<Courses />} />
+        <Route path="/" element={<Courses />} />
         <Route path="/courses/:id" element={<CourseDetail />} />
         <Route path="/signin" element={<UserSignIn />} />
         <Route path="/signup" element={<UserSignUp />} />
         <Route path="/signout" element={<UserSignOut />} />
         <Route element={<PrivateRoute />}>
           <Route path="authenticated" element={<Authenticated />} />
-          <Route path="/updatecourse" element={<UpdateCourse />} />
+          <Route path="/updatecourse/:id" element={<UpdateCourse />} />
           <Route path="/createcourse" element={<CreateCourse />} />
         </Route>
       </Routes>

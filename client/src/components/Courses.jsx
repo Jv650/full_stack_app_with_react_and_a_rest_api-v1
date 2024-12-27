@@ -7,11 +7,16 @@ const Courses = () => {
 
   //fetch courses from API
   useEffect(() => {
-    fetch("/api/courses")
-      .then((response) => response.json()) //converts res to JSON
+    api("/courses", "GET", null)
+      // .then((response) => {
+      //   if (!response.ok) {
+      //     throw new Error(`Error status: ${response.status}`);
+      //   }
+      //   return response.json(); //converts res to JSON
+      // })
       .then((data) => setCourses(data)) //update courses state
       .catch((error) => console.error("Error loading courses ", error));
-  }, [courses]); //run once when component loads
+  }, []); //run once when component loads
 
   //render component
   return (
@@ -24,7 +29,7 @@ const Courses = () => {
         >
           <Link to={`/courses/${course.id}`}>
             <h2 className="course--label">Course</h2>
-            <h3 className="course--title">Build a Basic Bookcase</h3>
+            <h3 className="course--title">{course.title}</h3>
           </Link>
         </div>
       ))}

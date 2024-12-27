@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useContext, useRef, useState } from "react";
-import UserContext from "../context/UserContext";
+import { UserContext } from "../context/UserContext";
 import { api } from "../utils/apiHelper";
 
 const UserSignUp = () => {
@@ -34,7 +34,7 @@ const UserSignUp = () => {
         navigate("/authenticated");
         // const userSignedIn = await actions.signIn(user); //actions
         // if (userSignedIn) {
-        //   navigate("/home"); // navigate("/authenticated");
+        //   navigate("/"); // navigate("/authenticated");
         // }
       } else if (response.status === 400) {
         //will return errors in browser

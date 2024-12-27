@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import UserContext from "../context/UserContext";
+
+import { api } from "../utils/apiHelper";
 
 const CreateCourse = () => {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ const CreateCourse = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch("/api/courses", "POST", course, null);
+      const response = await api("/courses", "POST", course);
 
       if (!response.ok) {
         throw new Error("Error creating course");
@@ -40,7 +41,7 @@ const CreateCourse = () => {
 
   const preventDef = (event) => {
     event.preventDefault();
-    navigate("/home");
+    navigate("/");
   };
 
   return (
@@ -105,11 +106,7 @@ const CreateCourse = () => {
         <button className="button" type="submit">
           Create Course
         </button>
-        <button
-          className="button button-secondary"
-          onClick={preventDef}
-          to="/home"
-        >
+        <button className="button button-secondary" onClick={preventDef} to="/">
           Cancel
         </button>
       </form>

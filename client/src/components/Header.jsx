@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
-import UserProvider from "../context/UserContext";
 import { useContext } from "react";
-import UserContext from "../context/UserContext";
+import { UserContext } from "../context/UserContext";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -10,14 +9,14 @@ const Header = () => {
   const signOut = (event) => {
     event.preventDefault();
     actions.signOut();
-    navigate("/home");
+    navigate("/");
   };
 
   return (
     <header>
       <div className="wrap header--flex">
         <h1 className="header--logo">
-          <Link to="/home">Courses</Link>
+          <Link to="/">Courses</Link>
         </h1>
         <nav>
           <ul className={authUser ? "header--signedout" : "header--signedout"}>
