@@ -8,12 +8,12 @@ const Courses = () => {
   //fetch courses from API
   useEffect(() => {
     api("/courses", "GET", null)
-      // .then((response) => {
-      //   if (!response.ok) {
-      //     throw new Error(`Error status: ${response.status}`);
-      //   }
-      //   return response.json(); //converts res to JSON
-      // })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error status: ${response.status}`);
+        }
+        return response.json(); //converts res to JSON
+      })
       .then((data) => setCourses(data)) //update courses state
       .catch((error) => console.error("Error loading courses ", error));
   }, []); //run once when component loads

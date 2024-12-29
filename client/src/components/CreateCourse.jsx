@@ -1,11 +1,14 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
 
 import { api } from "../utils/apiHelper";
 
 const CreateCourse = () => {
   const navigate = useNavigate();
+  const { authUser } = useContext(UserContext);
   const [course, setCourse] = useState({
+    userId: authUser.id,
     title: "",
     description: "",
     estimatedTime: "",
@@ -14,25 +17,21 @@ const CreateCourse = () => {
 
   //handle form input changes
   const handleChange = (event) => {
-    setCourse({ ...course, [event.target.title]: event.target.value });
+    setCourse({ ...course, [event.target.name]: event.target.value });
   };
 
   //handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await api("/courses", "POST", course);
+      const response = await api("/courses", "POST");
 
       if (!response.ok) {
         throw new Error("Error creating course");
       }
       //reset form after successful submission
-      setCourse({
-        title: "",
-        description: "",
-        estimatedTime: "",
-        materialsNeeded: "",
-      });
+      const newCourse = await response.json();
+      navigate(`/courses/${newCourse.id}`);
       alert("Course created successfully!");
     } catch (error) {
       console.error("Error creating course:", error);
@@ -55,29 +54,22 @@ const CreateCourse = () => {
         </ul>
       </div>
       <form>
-        {" "}
-        onSubmit = {handleSubmit}
         <div className="main--flex">
           <div>
             <label id="title">Course Title</label>
             <input
               id="title"
               name="title"
-              ref={course.title}
               value={course.title}
               onChange={handleChange}
             />
 
-            <p>
-              By{user.firstName}
-              {user.lastName}
-            </p>
+            {/* <p>By</p> edit */}
 
             <label id="description">Course Description</label>
             <textarea
               id="description"
               name="description"
-              ref={course.description}
               value={course.description}
               onChange={handleChange}
             ></textarea>
@@ -88,7 +80,6 @@ const CreateCourse = () => {
               id="estimatedTime"
               name="estimatedTime"
               type="text"
-              ref={course.estimatedTime}
               value={course.estimatedTime}
               onChange={handleChange}
             />
@@ -97,13 +88,12 @@ const CreateCourse = () => {
             <textarea
               id="materialsNeeded"
               name="materialsNeeded"
-              ref={course.materialsNeeded}
               value={course.materialsNeeded}
               onChange={handleChange}
             ></textarea>
           </div>
         </div>
-        <button className="button" type="submit">
+        <button className="button" type="submit" onSubmit={handleSubmit}>
           Create Course
         </button>
         <button className="button button-secondary" onClick={preventDef} to="/">

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom"; //import Link from react router
 import { api } from "../utils/apiHelper";
+import ErrorsDisplay from "./Error";
+import Cookies from "js-cookie";
 
 const UpdateCourse = () => {
   const { id } = useParams(); //get course id from the api
@@ -14,14 +16,20 @@ const UpdateCourse = () => {
     estimatedTime: "",
     materialsNeeded: "",
   });
+  const [errors, setErrors] = useState([]);
 
   //fetch /api/courses/:id from API
   useEffect(() => {
-    api(`/courses/${id}`, "PUT", setCourse)
+    api(`/courses/${id}`, "GET", setCourse)
       .then((response) => {
+        if (response.status === 400 || response.status == 401) {
+          const data = response.json();
+          setErrors(data || []);
+        }
         if (!response.ok) {
           throw new Error("Failed to fetch course");
         }
+        //console.log(response.json());
         return response.json(); //converts res to JSON
       })
       .then((data) => setCourse(data)) //update courses state
@@ -40,12 +48,27 @@ const UpdateCourse = () => {
   //handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
-    api(`/courses/${id}`, "PUT", course)
-      .then((response) => {
-        if (!response.ok) {
+    var credentials = Cookies.get("authenticatedUser");
+    credentials = JSON.parse(credentials);
+    console.log(credentials);
+    console.log(id);
+    api(`/courses/${id}`, "PUT", course, credentials)
+      .then(async (response) => {
+        console.log(response);
+        console.log(response.status);
+        if (response.status === 401) {
+          const data = await response.json();
+          console.log(data);
+          setErrors(["You are unathorized to update this course."]);
+          throw { errors: data.errors, status: response.status };
+        } else if (response.status === 400) {
+          const data = await response.json();
+          console.log(data);
+          setErrors(data.errors || []);
+          throw { errors: data.errors, status: response.status };
+        } else if (!response.ok) {
           throw new Error("Failed to update course");
         }
-        return response.json();
       })
       .then(() => navigate(`/courses/${id}`)) //redirect to the course detail page
       .catch((error) => console.error("Error updating course", error));
@@ -54,6 +77,7 @@ const UpdateCourse = () => {
   return (
     <div className="wrap">
       <h2>Update Course</h2>
+      {errors.length > 0 && <ErrorsDisplay errors={errors} />}
       <form onSubmit={handleSubmit}>
         <div className="main--flex">
           <div>

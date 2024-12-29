@@ -24,19 +24,26 @@ export const api = async (
     );
     options.headers.Authorization = `Basic ${encodedCredentials}`;
   }
-  try {
-    const response = await fetch(url, options);
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || response.status);
-    }
-    if (response.status === 204) {
-      return null;
-    }
-    return await response.json();
-  } catch (error) {
-    console.error(`API error: ${error.message}`);
-    throw error;
-  }
+  return fetch(url, options);
+  // try {
+  //   //console.log({ url, options }); //debugging req
+  //   const response = await fetch(url, options);
+
+  //   if (!response.ok) {
+  //     console.log("logging res", response);
+  //     console.log(response.headers.get("content-type"));
+  //     const error = await response.json();
+  //     throw new Error(error.message || response.status);
+  //   }
+  //   if (response.status === 204) {
+  //     return null;
+  //   }
+  //   console.log("api response:", response);
+  //   return response;
+  // } catch (error) {
+  //   console.log("unknown error:");
+  //   console.error(`API error: ${error.message}`);
+  //   throw error;
+  // }
 };

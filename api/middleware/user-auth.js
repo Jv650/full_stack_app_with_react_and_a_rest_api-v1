@@ -27,7 +27,10 @@ exports.authenticateUser = async (req, res, next) => {
     // that was retrieved from the data store.
     if (user) {
       const authenticated = bcrypt.compareSync(credentials.pass, user.password);
-      console.log(user.hashedPassword);
+      //console.log(user);
+      console.log("passwordHashed", user.password);
+      console.log(credentials);
+      console.log("from request", credentials.pass);
       // If the passwords match...
       // Store the retrieved user object on the request object
       // so any middleware functions that follow this middleware function
