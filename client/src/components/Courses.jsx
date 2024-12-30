@@ -22,11 +22,7 @@ const Courses = () => {
   return (
     <div className="wrap main--grid">
       {courses.map((course) => (
-        <div
-          key={course.id}
-          className="course--module course--link"
-          href="course-detail.html"
-        >
+        <div key={course.id} className="course--module course--link">
           <Link to={`/courses/${course.id}`}>
             <h2 className="course--label">Course</h2>
             <h3 className="course--title">{course.title}</h3>
@@ -34,10 +30,7 @@ const Courses = () => {
         </div>
       ))}
 
-      <div
-        className="course--module course--add--module"
-        href="create-course.html"
-      >
+      <div className="course--module course--add--module">
         <Link to="/courses/create">
           <span className="course--add--title"> New Course</span>
         </Link>

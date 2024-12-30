@@ -94,7 +94,12 @@ const CreateCourse = () => {
         "POST",
         setCourse,
         payload,
-        credentials
+        {
+          Authorization: `Basic ${btoa(
+            credentials.username + ":" + credentials.password
+          )}`,
+        }
+        //credentials
       );
 
       if (response.status === 201) {

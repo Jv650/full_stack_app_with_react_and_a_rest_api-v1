@@ -6,7 +6,7 @@ import { Link } from "react-router-dom"; //import Link from react router
 import { api } from "../utils/apiHelper";
 
 const CourseDetail = () => {
-  const [course, setCourse] = useState([{}]); //empty object bc its expecting props such as title, description, etc.
+  const [course, setCourse] = useState({}); //empty object bc its expecting props such as title, description, etc.
   const { id } = useParams(); //get course id from the api
   const navigate = useNavigate();
   const { authUser } = useContext(UserContext);
@@ -76,8 +76,7 @@ const CourseDetail = () => {
               </Link>
               <button
                 className="button"
-                onClick={handleDelete}
-                /*EDIT onClick={"DELETE"}*/
+                onClick={() => handleDelete(course.id)}
               >
                 Delete Course
               </button>

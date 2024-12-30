@@ -8,7 +8,7 @@ import CourseDetail from "./components/CourseDetail";
 import UserSignIn from "./components/UserSignIn";
 import UserSignUp from "./components/UserSignUp";
 import UserSignOut from "./components/UserSignOut";
-import { UserContext } from "./context/UserContext";
+import { UserContext, UserProvider } from "./context/UserContext";
 import CreateCourse from "./components/CreateCourse";
 import UpdateCourse from "./components/UpdateCourse";
 import PrivateRoute from "./components/PrivateRoute";
@@ -16,22 +16,24 @@ import Authenticated from "./components/Autheticated";
 
 function App() {
   return (
-    <div>
-      {console.log(UserContext)}
-      <Header />
-      <Routes>
-        <Route path="/" element={<Courses />} />
-        <Route path="/courses/:id" element={<CourseDetail />} />
-        <Route path="/signin" element={<UserSignIn />} />
-        <Route path="/signup" element={<UserSignUp />} />
-        <Route path="/signout" element={<UserSignOut />} />
-        <Route element={<PrivateRoute />}>
-          <Route path="authenticated" element={<Authenticated />} />
-          <Route path="/courses/:id/update" element={<UpdateCourse />} />
-          <Route path="/courses/create" element={<CreateCourse />} />
-        </Route>
-      </Routes>
-    </div>
+    <UserProvider>
+      <div>
+        {console.log(UserContext)}
+        <Header />
+        <Routes>
+          <Route path="/" element={<Courses />} />
+          <Route path="/courses/:id" element={<CourseDetail />} />
+          <Route path="/signin" element={<UserSignIn />} />
+          <Route path="/signup" element={<UserSignUp />} />
+          <Route path="/signout" element={<UserSignOut />} />
+          <Route element={<PrivateRoute />}>
+            <Route path="authenticated" element={<Authenticated />} />
+            <Route path="/courses/:id/update" element={<UpdateCourse />} />
+            <Route path="/courses/create" element={<CreateCourse />} />
+          </Route>
+        </Routes>
+      </div>
+    </UserProvider>
   );
 }
 
