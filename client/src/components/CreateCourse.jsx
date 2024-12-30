@@ -52,8 +52,6 @@ const CreateCourse = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      let credentials = Cookies.get("authenticatedUser");
-      credentials = JSON.parse(credentials);
       if (!course.title || !course.description) {
         setErrors((prev) => ({
           ...prev,
@@ -67,33 +65,49 @@ const CreateCourse = () => {
         description: course.description,
         estimatedTime: course.estimatedTime || "",
         materialsNeeded: course.materialsNeeded || "",
-        userId: credentials.id, //if i change to user id it works
+        userId: authUser.id, //if i change to user id it works
       };
 
-      let response = await api(`/courses`, "POST", payload, credentials);
-      // else if (!response.ok) {
-      //   throw new Error("Error creating course");
-      // }
-      // Reset form after successful submission
-      // const newCourse = await response.json();
-      // console.log(newCourse);
-      // navigate(`/courses/${newCourse.id}`);
-      // alert("Course created successfully!");
-      if (response.ok) {
-        const newCourse = await response.json(); // Get created course data
-        console.log(newCourse);
-        navigate(`/courses/${newCourse.id}`); // Redirect to the new course page
-        alert("Course created successfully!");
+      const credentials = {
+        username: authUser.username, //emailAddress
+        password: authUser.password,
+      };
+      console.log("payload: ", payload);
+
+      const response = await api(`/courses`, "POST", payload, credentials);
+
+      if (response.status === 201) {
+        console.log("Course created successfully!", response);
       } else {
-        // Handle API error
-        const errorData = await response.json();
-        console.error("Error creating course:", errorData);
-        alert("Failed to create course. Please try again.");
+        console.error("Error creating course: ", response);
       }
     } catch (error) {
-      console.error("Error creating course:", error);
+      console.error("An error occurred: ", error);
     }
   };
+  // else if (!response.ok) {
+  //   throw new Error("Error creating course");
+  // }
+  // Reset form after successful submission
+  // const newCourse = await response.json();
+  // console.log(newCourse);
+  // navigate(`/courses/${newCourse.id}`);
+  // alert("Course created successfully!");
+  //     if (response.ok) {
+  //       const newCourse = await response.json(); // Get created course data
+  //       console.log(newCourse);
+  //       navigate(`/courses/${newCourse.id}`); // Redirect to the new course page
+  //       alert("Course created successfully!");
+  //     } else {
+  //       // Handle API error
+  //       const errorData = await response.json();
+  //       console.error("Error creating course:", errorData);
+  //       alert("Failed to create course. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error creating course:", error);
+  //   }
+  // };
 
   const preventDef = (event) => {
     event.preventDefault();

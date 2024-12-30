@@ -26,12 +26,12 @@ export const UserProvider = ({ children }) => {
       console.log("user context", credentials);
       const response = await api("/users", "GET", null, credentials);
       //fetchOptions
-      console.log("user context 2", credentials);
+      //console.log("user context 2", credentials);
       if (response.status === 200) {
         const user = await response.json();
 
         setAuthUser(user);
-        console.log("user context 3", credentials);
+        //console.log("user context 3", credentials);
         //create cookie authenticateuser will be the name of the cookie
         //JSON.stringify will be store the stringified user object
         //expires will hold the expiration date, 1 means it will expire after1 day
