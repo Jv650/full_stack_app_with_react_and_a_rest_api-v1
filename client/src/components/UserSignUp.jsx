@@ -18,10 +18,10 @@ const UserSignUp = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const user = {
-      firstName: firstName.current.value,
-      lastName: lastName.current.value,
-      emailAddress: emailAddress.current.value,
-      password: password.current.value,
+      firstName: firstName.value,
+      lastName: lastName.value,
+      emailAddress: emailAddress.value,
+      password: password.value,
     };
 
     try {
@@ -32,10 +32,10 @@ const UserSignUp = () => {
         );
         await actions.signIn(user);
         navigate("/authenticated");
-        // const userSignedIn = await actions.signIn(user); //actions
-        // if (userSignedIn) {
-        //   navigate("/"); // navigate("/authenticated");
-        // }
+        const userSignedIn = await actions.signIn(user); //actions
+        if (userSignedIn) {
+          navigate("/"); // navigate("/authenticated");
+        }
       } else if (response.status === 400) {
         //will return errors in browser
         const data = await response.json();
@@ -55,46 +55,46 @@ const UserSignUp = () => {
   };
 
   return (
-    <div className="form--centered">
-      <h2>Sign Up</h2>
+    <main>
+      <div className="form--centered">
+        <h2>Sign Up</h2>
 
-      <div>
-        {errors.length ? (
-          <div>
-            <h2 className="validation--errors--label">Validation errors</h2>
-            <div className="validation-errors">
-              <ul>
-                {errors.map((error, i) => (
-                  <li key={i}>{error}</li>
-                ))}
-              </ul>
+        <div>
+          {errors.length ? (
+            <div>
+              <div className="validation-errors">
+                <ul>
+                  {errors.map((error, i) => (
+                    <li key={i}>{error}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
-          </div>
-        ) : null}
-        <form onSubmit={handleSubmit}>
-          <label id="firstName">First Name</label>
-          <input name="firstName" type="text" ref={firstName} />
-          <label id="lastName">Last Name</label>
-          <input name="lastName" type="text" ref={lastName} />
-          <label id="emailAddress">Email Address</label>
-          <input name="emailAddress" type="text" ref={emailAddress} />
-          <label id="password">Password</label>
-          <input name="password" type="password" ref={password} />
-          <div className="pad-bottom">
+          ) : null}
+          <form onSubmit={handleSubmit}>
+            <label htmlFor="firstName">First Name</label>
+            <input id="firstName" name="firstName" type="text" />
+            <label htmlFor="lastName">Last Name</label>
+            <input id="lastName" name="lastName" type="text" />
+            <label htmlFor="emailAddress">Email Address</label>
+            <input id="emailAddress" name="emailAddress" type="email" />
+            <label htmlFor="password">Password</label>
+            <input id="password" name="password" type="password" />
+
             <button className="button" type="submit">
               Sign up
             </button>
             <button className="button button-secondary" onClick={handleCancel}>
               Cancel
             </button>
-          </div>
-        </form>
+          </form>
+        </div>
+        <p>
+          Already have a user account? Click here to{" "}
+          <Link to="/signin">sign in</Link>!
+        </p>
       </div>
-      <p>
-        Already have a user account? <Link to="/signin">Click here</Link> to
-        sign in!
-      </p>
-    </div>
+    </main>
   );
 };
 export default UserSignUp;

@@ -4,7 +4,6 @@ import { UserContext } from "../context/UserContext";
 import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom"; //import Link from react router
 import { api } from "../utils/apiHelper";
-import Cookies from "js-cookie";
 
 const CourseDetail = () => {
   const [course, setCourse] = useState([{}]); //empty object bc its expecting props such as title, description, etc.
@@ -25,55 +24,46 @@ const CourseDetail = () => {
       .catch((error) => console.error("Error loading courses ", error));
   }, [id]); //run once when component loads
 
-  //delete course function
-  // const handleDelete = async () => {
-  //   try {
-  //     var credentials = Cookies.get("authenticatedUser");
-  //     credentials = JSON.parse(credentials);
-  //     //const response = await api(`/courses/${id}`, "PUT", course, credentials);
-  //     const response = await api(`/courses/${id}`, "DELETE", null, credentials);
-  //     if (credentials == id) {
-  //       response.ok;
-  //       navigate("/");
-  //     }
-  //     // if (response.ok) {
-  //     //   navigate("/");
-  //     // }
-  //     else {
-  //       throw new Error("Failed to delete the course");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error deleting the course", error);
-  //   }
-  // };
-
-  const handleDelete = async () => {
+  const handleDelete = async (id) => {
     try {
-      const credentials = JSON.parse(Cookies.get("authenticatedUser"));
-      const userId = credentials.id;
+      if (!authUser) {
+        throw new Error("You must be signed in to delete a course.");
+      }
 
-      const courseResponse = await api(`/courses/${id}`, "GET");
+      const { id: userId, password } = authUser; //use userid and password from context
+
+      //fetch the course data to check if mwtches owner
+      const courseResponse = await api(`/courses/${id}`, "GET", null, {
+        email: authUser.email,
+        password,
+      });
+
+      if (!courseResponse.ok) {
+        throw new Error("Failed to fetch course data.");
+      }
+
       const courseData = await courseResponse.json();
 
+      //check if the authenticated user owns the course
       if (courseData.userId !== userId) {
-        throw new Error("You are not authorized to delete this course");
+        throw new Error("You are not authorized to delete this course.");
       }
-      const response = await api(`/courses/${id}`, "DELETE", null, credentials);
+
+      //delete request
+      const response = await api(`/courses/${id}`, "DELETE", null, {
+        email: authUser.email,
+        password,
+      });
+
       if (response.ok) {
-        navigate("/");
+        navigate("/"); //nav to the home page on success
       } else {
         throw new Error("Failed to delete the course.");
       }
     } catch (error) {
-      console.error("Error deleting the course.", error);
+      console.error("Error deleting the course:", error);
     }
   };
-
-  // function handleDelete(id) {
-  //   api(`/courses/${id}`, {
-  //     method: "DELETE",
-  //   });
-  // }
 
   return (
     <main>
@@ -104,9 +94,7 @@ const CourseDetail = () => {
         <div className="main--flex">
           <div>
             <h3 className="course--detail--title">Course</h3>
-            <h4 className="course--name">
-              <Markdown>{course.title}</Markdown>
-            </h4>
+            <h4 className="course--name">{course.title}</h4>
             <p>
               By {""}
               {course.user

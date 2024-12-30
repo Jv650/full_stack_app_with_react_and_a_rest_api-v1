@@ -27,7 +27,7 @@ function App() {
         <Route path="/signout" element={<UserSignOut />} />
         <Route element={<PrivateRoute />}>
           <Route path="authenticated" element={<Authenticated />} />
-          <Route path="/:id/update" element={<UpdateCourse />} />
+          <Route path="/courses/:id/update" element={<UpdateCourse />} />
           <Route path="/courses/create" element={<CreateCourse />} />
         </Route>
       </Routes>

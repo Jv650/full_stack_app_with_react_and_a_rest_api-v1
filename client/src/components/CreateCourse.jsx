@@ -1,13 +1,27 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import Cookies from "js-cookie";
 import { api } from "../utils/apiHelper";
 
 const CreateCourse = () => {
+  const emailAddress = useRef(null);
+  const password = useRef(null);
   const navigate = useNavigate();
   const { authUser } = useContext(UserContext);
-  const [course, setCourse] = useState({});
+  const [course, setCourse] = useState({
+    title: "",
+    description: "",
+    estimatedTime: "",
+    materialsNeeded: "",
+    userId: "", //if i change to user id it works
+  });
+
+  useEffect(() => {
+    if (authUser?.id) {
+      setCourse((prevCourse) => ({ ...prevCourse, userId: authUser.id }));
+    }
+  }, [authUser]);
 
   // State for validation errors
   const [errors, setErrors] = useState({
@@ -65,16 +79,23 @@ const CreateCourse = () => {
         description: course.description,
         estimatedTime: course.estimatedTime || "",
         materialsNeeded: course.materialsNeeded || "",
-        userId: authUser.id, //if i change to user id it works
+        userId: 1, //if i change to user id it works
       };
+      console.log("payload is:", payload);
 
       const credentials = {
-        username: authUser.username, //emailAddress
+        username: authUser.emailAddress,
         password: authUser.password,
       };
-      console.log("payload: ", payload);
+      console.log("credentials are: ", credentials);
 
-      const response = await api(`/courses`, "POST", payload, credentials);
+      const response = await api(
+        `/courses`,
+        "POST",
+        setCourse,
+        payload,
+        credentials
+      );
 
       if (response.status === 201) {
         console.log("Course created successfully!", response);
@@ -84,6 +105,7 @@ const CreateCourse = () => {
     } catch (error) {
       console.error("An error occurred: ", error);
     }
+    console.log("current auth user:", authUser);
   };
   // else if (!response.ok) {
   //   throw new Error("Error creating course");
@@ -115,63 +137,80 @@ const CreateCourse = () => {
   };
 
   return (
-    <div className="wrap">
-      <h2>Create Course</h2>
-      <div className="validation--errors">
-        <h3>Validation Errors</h3>
-        <ul>
-          <li>Please provide a value for "Title"</li>
-          <li>Please provide a value for "Description"</li>
-        </ul>
+    <main>
+      <div className="wrap">
+        <h2>Create Course</h2>
+        {(errors.title || errors.description || errors.other.length > 0) && (
+          <div className="validation--errors">
+            <h3>Validation Errors</h3>
+            <ul>
+              {errors.title && <li>Please provide a value for "Title"</li>}
+              {errors.description && (
+                <li>Please provide a value for "Description"</li>
+              )}
+              {errors.other.map((error, i) => (
+                <li key={i}>{error}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          <div className="main--flex">
+            <div>
+              <label htmlFor="courseTitle">Course Title</label>
+              <input
+                id="courseTitle"
+                name="title"
+                type="text"
+                value={course.title}
+                onChange={handleChange}
+              />
+
+              <p>
+                By {authUser.firstName} {authUser.lastName}
+              </p>
+
+              <label id="description">Course Description</label>
+              <textarea
+                id="description"
+                name="description"
+                value={course.description}
+                onChange={handleChange}
+              ></textarea>
+            </div>
+            <div>
+              <label htmlFor="estimatedTime">Estimated Time</label>
+              <input
+                id="estimatedTime"
+                name="estimatedTime"
+                type="text"
+                value={course.estimatedTime}
+                onChange={handleChange}
+              />
+
+              <label htmlFor="materialsNeeded">Materials Needed</label>
+              <textarea
+                id="materialsNeeded"
+                name="materialsNeeded"
+                value={course.materialsNeeded}
+                onChange={handleChange}
+              ></textarea>
+            </div>
+          </div>
+          <button className="button" type="submit">
+            Create Course
+          </button>
+          <button
+            className="button button-secondary"
+            onClick={preventDef}
+            to="/"
+          >
+            Cancel
+          </button>
+        </form>
       </div>
-      <form onSubmit={handleSubmit}>
-        <div className="main--flex">
-          <div>
-            <label id="title">Course Title</label>
-            <input
-              id="title"
-              name="title"
-              value={course.title}
-              onChange={handleChange}
-            />
-
-            {/* <p>By</p> edit */}
-
-            <label id="description">Course Description</label>
-            <textarea
-              id="description"
-              name="description"
-              value={course.description}
-              onChange={handleChange}
-            ></textarea>
-          </div>
-          <div>
-            <label id="estimatedTime">Estimated Time</label>
-            <input
-              id="estimatedTime"
-              name="estimatedTime"
-              type="text"
-              value={course.estimatedTime}
-              onChange={handleChange}
-            />
-
-            <label id="materialsNeeded">Materials Needed</label>
-            <textarea
-              id="materialsNeeded"
-              name="materialsNeeded"
-              value={course.materialsNeeded}
-              onChange={handleChange}
-            ></textarea>
-          </div>
-        </div>
-        <button className="button" type="submit">
-          Create Course
-        </button>
-        <button className="button button-secondary" onClick={preventDef} to="/">
-          Cancel
-        </button>
-      </form>
-    </div>
+    </main>
   );
 };
 export default CreateCourse;
