@@ -50,20 +50,20 @@ const UpdateCourse = () => {
     event.preventDefault();
     var credentials = Cookies.get("authenticatedUser");
     credentials = JSON.parse(credentials);
-    console.log(credentials);
-    console.log(id);
+    //console.log(credentials);
+    //console.log(id);
     api(`/courses/${id}`, "PUT", course, credentials)
       .then(async (response) => {
-        console.log(response);
-        console.log(response.status);
+        // console.log(response);
+        // console.log(response.status);
         if (response.status === 401) {
           const data = await response.json();
-          console.log(data);
+          //console.log(data);
           setErrors(["You are unathorized to update this course."]);
           throw { errors: data.errors, status: response.status };
         } else if (response.status === 400) {
           const data = await response.json();
-          console.log(data);
+          //console.log(data);
           setErrors(data.errors || []);
           throw { errors: data.errors, status: response.status };
         } else if (!response.ok) {

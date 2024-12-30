@@ -1,6 +1,7 @@
 import { createContext, useState } from "react";
 import Cookies from "js-cookie";
 import { api } from "../utils/apiHelper";
+import PropTypes from "prop-types";
 
 export const UserContext = createContext(null);
 
@@ -74,4 +75,8 @@ export const UserProvider = ({ children }) => {
       {children}
     </UserContext.Provider>
   );
+};
+//validation for children
+UserProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };

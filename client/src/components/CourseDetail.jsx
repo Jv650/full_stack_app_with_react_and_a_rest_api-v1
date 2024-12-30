@@ -24,19 +24,46 @@ const CourseDetail = () => {
   }, [id]); //run once when component loads
 
   //delete course function
+  // const handleDelete = async () => {
+  //   try {
+  //     var credentials = Cookies.get("authenticatedUser");
+  //     credentials = JSON.parse(credentials);
+  //     //const response = await api(`/courses/${id}`, "PUT", course, credentials);
+  //     const response = await api(`/courses/${id}`, "DELETE", null, credentials);
+  //     if (credentials == id) {
+  //       response.ok;
+  //       navigate("/");
+  //     }
+  //     // if (response.ok) {
+  //     //   navigate("/");
+  //     // }
+  //     else {
+  //       throw new Error("Failed to delete the course");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error deleting the course", error);
+  //   }
+  // };
+
   const handleDelete = async () => {
     try {
-      var credentials = Cookies.get("authenticatedUser");
-      credentials = JSON.parse(credentials);
-      //const response = await api(`/courses/${id}`, "PUT", course, credentials);
+      const credentials = JSON.parse(Cookies.get("authenticatedUser"));
+      const userId = credentials.id;
+
+      const courseResponse = await api(`/courses/${id}`, "GET");
+      const courseData = await courseResponse.json();
+
+      if (courseData.userId !== userId) {
+        throw new Error("You are not authorized to delete this course");
+      }
       const response = await api(`/courses/${id}`, "DELETE", null, credentials);
       if (response.ok) {
         navigate("/");
       } else {
-        throw new Error("Failed to delete the course");
+        throw new Error("Failed to delete the course.");
       }
     } catch (error) {
-      console.error("Error deleting the course", error);
+      console.error("Error deleting the course.", error);
     }
   };
 

@@ -22,7 +22,7 @@ const UserSignIn = () => {
     }
     console.log("logging:", from);
     const credentials = {
-      emailAddress: emailAddress.current.value,
+      username: emailAddress.current.value,
       password: password.current.value,
     };
 
