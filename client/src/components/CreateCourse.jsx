@@ -45,8 +45,8 @@ const CreateCourse = () => {
       if (!course.title || !course.description) {
         setErrors((prev) => ({
           ...prev,
-          title: course.title ? "" : "Title is required",
-          description: course.description ? "" : "Description is required",
+          title: !course.title ? "Title is required" : false,
+          description: !course.description ? "Description is required" : false,
         }));
         return;
       }
@@ -55,11 +55,12 @@ const CreateCourse = () => {
         description: course.description,
         estimatedTime: course.estimatedTime || "",
         materialsNeeded: course.materialsNeeded || "",
-        userId: 1, //if i change to user id it works
+        userId: authUser.id, //if i change to user id it works
       };
       console.log("payload is:", payload);
 
       const credentials = {
+        userId: authUser.id,
         emailAddress: authUser.emailAddress, //emailAdrress:
         password: authUser.password,
       };
@@ -68,7 +69,7 @@ const CreateCourse = () => {
       const response = await api(
         `/courses`,
         "POST",
-        setCourse,
+        null,
         credentials,
         payload,
         {
@@ -82,6 +83,9 @@ const CreateCourse = () => {
 
       if (response.status === 201) {
         console.log("Course created successfully!", response);
+        // const newCourse = await response.json(); // Get created course data
+        // console.log(newCourse);
+        // navigate(`/courses/${newCourse.id}`); // Redirect to the new course page
       } else {
         console.error("Error creating course: ", response);
       }

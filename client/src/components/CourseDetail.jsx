@@ -22,24 +22,47 @@ const CourseDetail = () => {
       })
       .then((data) => setCourse(data)) //update courses state
       .catch((error) => console.error("Error loading courses ", error));
-  }, [id]); //run once when component loads
+  }, [id, authUser]); //run once when component loads
 
   const handleDelete = async (id) => {
     try {
-      //ensure the user is signed in
-      if (!authUser) {
-        throw new Error("You must be signed in to delete a course.");
-      }
-
-      //extract email and password from authUser (assumed to come from context)
-      const { emailAddress, password } = authUser;
-
-      //prform the delete request
       const response = await api(`/courses/${id}`, "DELETE", null, {
-        emailAddress,
-        password,
+        emailAddress: authUser.emailAddress, //emailAdrress:
+        password: authUser.password,
+        headers: {
+          Authorization: `Basic ${btoa(
+            authUser.emailAddress + ":" + authUser.password
+          )}`,
+        },
       });
+      // //ensure the user is signed in
+      // if (!authUser) {
+      //   throw new Error("You must be signed in to delete a course.");
+      // }
 
+      //extract email and password from authUser
+      //const { emailAddress, password } = authUser;
+
+      // const credentials = {
+      //   userId: authUser.id,
+      //   emailAddress: authUser.emailAddress, //emailAdrress:
+      //   password: authUser.password,
+      // };
+      // console.log("credentials are: ", credentials);
+
+      // const response = await api(
+      //   `/courses/${id}`,
+      //   "DELETE",
+      //   null,
+      //   credentials,
+      //   {
+      //     headers: {
+      //       Authorization: `Basic ${btoa(
+      //         credentials.emailAddress + ":" + credentials.password
+      //       )}`,
+      //     },
+      //   }
+      // );
       //check the response status
       if (response.ok) {
         navigate("/"); // Redirect to the home page on success
@@ -55,7 +78,7 @@ const CourseDetail = () => {
     <main>
       <div className="actions--bar">
         <div className="wrap">
-          {authUser && authUser.id === course.id && (
+          {authUser && authUser.id === course.userId && (
             <>
               <Link className="button" to={`/courses/${id}/update`}>
                 Update Course
@@ -68,8 +91,8 @@ const CourseDetail = () => {
               </button>
             </>
           )}
-          <Link to="/">
-            <a className="button button-secondary">Return to List</a>
+          <Link className="button button-secondary" to="/">
+            Return to List
           </Link>
         </div>
       </div>
