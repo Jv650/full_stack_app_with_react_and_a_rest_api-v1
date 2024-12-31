@@ -5,8 +5,6 @@ import Cookies from "js-cookie";
 import { api } from "../utils/apiHelper";
 
 const CreateCourse = () => {
-  const emailAddress = useRef(null);
-  const password = useRef(null);
   const navigate = useNavigate();
   const { authUser } = useContext(UserContext);
   const [course, setCourse] = useState({
@@ -14,7 +12,7 @@ const CreateCourse = () => {
     description: "",
     estimatedTime: "",
     materialsNeeded: "",
-    userId: "", //if i change to user id it works
+    userId: authUser.id, //if i change to user id it works
   });
 
   useEffect(() => {
@@ -41,28 +39,6 @@ const CreateCourse = () => {
     }
   };
 
-  // // Handle form submission
-  // const handleSubmit = () => {
-  //   event.preventDefault();
-  //   Cookies.get("authenticatedUser");
-  //   credentials = JSON.parse(credentials);
-  //   fetch(`http://localhost:5000/api/courses`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json; charset=utf-8",
-  //     },
-  //     body: JSON.stringify({
-  //       title: "",
-  //       description: "",
-  //       estimatedTime: "",
-  //       materialsNeeded: "",
-  //     })
-  //       .then((response) => response.json())
-  //       .then((data) => console.log("Data sent:", data))
-  //       .catch((error) => console.error("Error:", error)),
-  //   });
-  // };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -84,7 +60,7 @@ const CreateCourse = () => {
       console.log("payload is:", payload);
 
       const credentials = {
-        username: authUser.emailAddress,
+        emailAddress: authUser.emailAddress, //emailAdrress:
         password: authUser.password,
       };
       console.log("credentials are: ", credentials);
@@ -93,13 +69,15 @@ const CreateCourse = () => {
         `/courses`,
         "POST",
         setCourse,
+        credentials,
         payload,
         {
-          Authorization: `Basic ${btoa(
-            credentials.username + ":" + credentials.password
-          )}`,
+          headers: {
+            Authorization: `Basic ${btoa(
+              credentials.emailAddress + ":" + credentials.password
+            )}`,
+          },
         }
-        //credentials
       );
 
       if (response.status === 201) {

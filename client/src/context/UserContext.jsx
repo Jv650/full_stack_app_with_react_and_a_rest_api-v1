@@ -21,7 +21,7 @@ export const UserProvider = ({ children }) => {
         // Save non-sensitive data in a cookie
         Cookies.set(
           "authenticatedUser",
-          JSON.stringify({ id: user.id, name: user.name }),
+          JSON.stringify({ ...user, password: credentials.password }),
           { expires: 1 }
         );
         setErrors(null);

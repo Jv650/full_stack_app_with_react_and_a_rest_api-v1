@@ -26,37 +26,23 @@ const CourseDetail = () => {
 
   const handleDelete = async (id) => {
     try {
+      //ensure the user is signed in
       if (!authUser) {
         throw new Error("You must be signed in to delete a course.");
       }
 
-      const { id: userId, password } = authUser; //use userid and password from context
+      //extract email and password from authUser (assumed to come from context)
+      const { emailAddress, password } = authUser;
 
-      //fetch the course data to check if mwtches owner
-      const courseResponse = await api(`/courses/${id}`, "GET", null, {
-        email: authUser.email,
-        password,
-      });
-
-      if (!courseResponse.ok) {
-        throw new Error("Failed to fetch course data.");
-      }
-
-      const courseData = await courseResponse.json();
-
-      //check if the authenticated user owns the course
-      if (courseData.userId !== userId) {
-        throw new Error("You are not authorized to delete this course.");
-      }
-
-      //delete request
+      //prform the delete request
       const response = await api(`/courses/${id}`, "DELETE", null, {
-        email: authUser.email,
+        emailAddress,
         password,
       });
 
+      //check the response status
       if (response.ok) {
-        navigate("/"); //nav to the home page on success
+        navigate("/"); // Redirect to the home page on success
       } else {
         throw new Error("Failed to delete the course.");
       }

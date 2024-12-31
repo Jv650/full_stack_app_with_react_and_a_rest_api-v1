@@ -20,7 +20,7 @@ export const api = async (
   //add authroization header if credentials are provided
   if (credentials) {
     const encodedCredentials = btoa(
-      `${credentials.username}:${credentials.password}`
+      `${credentials.emailAddress}:${credentials.password}`
     ); //maybe changebakc to emailAddress
     options.headers.Authorization = `Basic ${encodedCredentials}`;
   }
