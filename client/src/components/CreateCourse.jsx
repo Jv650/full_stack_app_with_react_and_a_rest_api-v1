@@ -12,7 +12,7 @@ const CreateCourse = () => {
     description: "",
     estimatedTime: "",
     materialsNeeded: "",
-    userId: authUser.id, //if i change to user id it works
+    userId: authUser?.id || "", //if i change to user id it works
   });
 
   useEffect(() => {
@@ -59,34 +59,24 @@ const CreateCourse = () => {
       };
       console.log("payload is:", payload);
 
-      const credentials = {
-        userId: authUser.id,
-        emailAddress: authUser.emailAddress, //emailAdrress:
-        password: authUser.password,
-      };
-      console.log("credentials are: ", credentials);
+      // const credentials = {
+      //   userId: authUser.id,
+      //   emailAddress: authUser.emailAddress, //emailAdrress:
+      //   password: authUser.password,
+      // };
+      // console.log("credentials are: ", credentials);
 
-      const response = await api(
-        `/courses`,
-        "POST",
-        null,
-        credentials,
-        payload,
-        {
-          headers: {
-            Authorization: `Basic ${btoa(
-              credentials.emailAddress + ":" + credentials.password
-            )}`,
-          },
-        }
-      );
+      const response = await api(`/courses`, "POST", payload, authUser);
 
       if (response.status === 201) {
+        const newCourse = await response.json(); // Get created course data
+        console.log("newcourse data:", newCourse);
         console.log("Course created successfully!", response);
-        // const newCourse = await response.json(); // Get created course data
-        // console.log(newCourse);
-        // navigate(`/courses/${newCourse.id}`); // Redirect to the new course page
+        navigate(`/courses/${newCourse.id}`); // Redirect to the new course page
       } else {
+        const errorData = await response.json();
+        console.error("Error creating course:", errorData);
+        setErrors((prev) => ({ ...prev, other: errorData.errors || [] }));
         console.error("Error creating course: ", response);
       }
     } catch (error) {
