@@ -1,7 +1,6 @@
-import { useContext, useEffect, useState, useRef } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
-import Cookies from "js-cookie";
 import { api } from "../utils/apiHelper";
 
 const CreateCourse = () => {
@@ -69,10 +68,10 @@ const CreateCourse = () => {
       const response = await api(`/courses`, "POST", payload, authUser);
 
       if (response.status === 201) {
-        const newCourse = await response.json(); // Get created course data
-        console.log("newcourse data:", newCourse);
-        console.log("Course created successfully!", response);
-        navigate(`/courses/${newCourse.id}`); // Redirect to the new course page
+        // const newCourse = await response.json(); // Get created course data
+        // console.log("newcourse data:", newCourse);
+        // console.log("Course created successfully!", response);
+        navigate("/"); // Redirect to the new course page
       } else {
         const errorData = await response.json();
         console.error("Error creating course:", errorData);

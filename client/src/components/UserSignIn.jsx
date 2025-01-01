@@ -1,6 +1,5 @@
 import { useRef, useContext, useState } from "react";
 import { UserContext } from "../context/UserContext";
-import { api } from "../utils/apiHelper";
 import { useNavigate, Link, useLocation } from "react-router-dom"; //import Link from react router
 
 const UserSignIn = () => {

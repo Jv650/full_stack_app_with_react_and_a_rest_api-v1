@@ -5,7 +5,7 @@ import { api } from "../utils/apiHelper";
 
 const UserSignUp = () => {
   //hooks need to be at top of component
-  const actions = useContext(UserContext); //{actions}
+  const { actions } = useContext(UserContext); //{actions}
   const navigate = useNavigate();
   // State
   const firstName = useRef(null);
@@ -18,20 +18,20 @@ const UserSignUp = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const user = {
-      firstName: firstName.value,
-      lastName: lastName.value,
-      emailAddress: emailAddress.value,
-      password: password.value,
+      firstName: firstName.current.value,
+      lastName: lastName.current.value,
+      emailAddress: emailAddress.current.value,
+      password: password.current.value,
     };
 
     try {
       const response = await api("/users", "POST", user, null); //first arg is URL path, second arg is method, and lastly the data (user) tat will be included in the body
       if (response.status === 201) {
-        console.log(
-          `${user.firstName} is successfully signed up and authenticated!`
-        );
-        await actions.signIn(user);
-        navigate("/authenticated");
+        // console.log(
+        //   `${user.firstName} is successfully signed up and authenticated!`
+        // );
+        //await actions.signIn(user);
+        //navigate("/authenticated");
         const userSignedIn = await actions.signIn(user); //actions
         if (userSignedIn) {
           navigate("/"); // navigate("/authenticated");
@@ -40,6 +40,7 @@ const UserSignUp = () => {
         //will return errors in browser
         const data = await response.json();
         setErrors(data.errors);
+        console.log(errors);
       } else {
         throw new Error("Network response failed " + response.status);
       }
@@ -73,13 +74,28 @@ const UserSignUp = () => {
           ) : null}
           <form onSubmit={handleSubmit}>
             <label htmlFor="firstName">First Name</label>
-            <input id="firstName" name="firstName" type="text" />
+            <input
+              id="firstName"
+              name="firstName"
+              type="text"
+              ref={firstName}
+            />
             <label htmlFor="lastName">Last Name</label>
-            <input id="lastName" name="lastName" type="text" />
+            <input id="lastName" name="lastName" type="text" ref={lastName} />
             <label htmlFor="emailAddress">Email Address</label>
-            <input id="emailAddress" name="emailAddress" type="email" />
+            <input
+              id="emailAddress"
+              name="emailAddress"
+              type="email"
+              ref={emailAddress}
+            />
             <label htmlFor="password">Password</label>
-            <input id="password" name="password" type="password" />
+            <input
+              id="password"
+              name="password"
+              type="password"
+              ref={password}
+            />
 
             <button className="button" type="submit">
               Sign up

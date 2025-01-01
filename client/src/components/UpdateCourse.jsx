@@ -1,13 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Link } from "react-router-dom"; //import Link from react router
 import { api } from "../utils/apiHelper";
 import ErrorsDisplay from "./Error";
+import { UserContext } from "../context/UserContext";
 import Cookies from "js-cookie";
 
 const UpdateCourse = () => {
   const { id } = useParams(); //get course id from the api
   const navigate = useNavigate();
+  const { authUser } = useContext(UserContext);
 
   //state forcourse data
   const [course, setCourse] = useState({
@@ -48,11 +49,11 @@ const UpdateCourse = () => {
   //handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
-    var credentials = Cookies.get("authenticatedUser");
-    credentials = JSON.parse(credentials);
+    // var credentials = Cookies.get("authenticatedUser");
+    // credentials = JSON.parse(credentials);
     //console.log(credentials);
     //console.log(id);
-    api(`/courses/${id}`, "PUT", course, credentials)
+    api(`/courses/${id}`, "PUT", course, authUser)
       .then(async (response) => {
         // console.log(response);
         // console.log(response.status);
@@ -81,9 +82,9 @@ const UpdateCourse = () => {
       <form onSubmit={handleSubmit}>
         <div className="main--flex">
           <div>
-            <label id="courseTitle">Course Title</label>
+            <label htmlFor="courseTitle">Course Title</label>
             <input
-              id="title"
+              id="courseTitle"
               name="title"
               type="text"
               value={course.title}
@@ -91,19 +92,19 @@ const UpdateCourse = () => {
             />
 
             <p>
-              By {course.firstName},{course.lastName}
+              By {authUser.firstName} {authUser.lastName}
             </p>
 
-            <label id="courseDescription">Course Description</label>
+            <label htmlFor="courseDescription">Course Description</label>
             <textarea
-              id="description"
+              id="courseDescription"
               name="description"
               value={course.description}
               type="text"
               onChange={handleChange}
             ></textarea>
             <div>
-              <label id="estimatedTime">Estimated Time</label>
+              <label htmlFor="estimatedTime">Estimated Time</label>
               <input
                 id="estimatedTime"
                 name="estimatedTime"
@@ -112,7 +113,7 @@ const UpdateCourse = () => {
                 onChange={handleChange}
               />
 
-              <label id="materialsNeeded">Materials Needed</label>
+              <label htmlFor="materialsNeeded">Materials Needed</label>
               <textarea
                 id="materialsNeeded"
                 name="materialsNeeded"

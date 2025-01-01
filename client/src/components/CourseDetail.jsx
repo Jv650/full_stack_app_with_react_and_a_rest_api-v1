@@ -78,7 +78,7 @@ const CourseDetail = () => {
     <main>
       <div className="actions--bar">
         <div className="wrap">
-          {authUser && authUser.id === course.user.id && (
+          {authUser && authUser.id === course.User?.id && (
             <>
               <Link className="button" to={`/courses/${id}/update`}>
                 Update Course
@@ -105,17 +105,15 @@ const CourseDetail = () => {
             <h4 className="course--name">{course.title}</h4>
             <p>
               By {""}
-              {course.user
-                ? `${course.user.firstName} ${course.user.lastName}`
+              {course.User
+                ? `${course.User.firstName} ${course.User.lastName}`
                 : ""}
             </p>
             <Markdown>{course.description}</Markdown>
           </div>
           <div>
             <h3 className="course--detail--title">Estimated Time</h3>
-            <p>
-              <Markdown>{course.estimatedTime}</Markdown>
-            </p>
+            <p>{course.estimatedTime}</p>
 
             <h3 className="course--course--title">Materials Needed</h3>
             <ul className="course--course--list">
