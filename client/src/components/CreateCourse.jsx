@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { api } from "../utils/apiHelper";
+import ErrorsDisplay from "./Error";
 
 const CreateCourse = () => {
   const navigate = useNavigate();
@@ -21,11 +22,7 @@ const CreateCourse = () => {
   }, [authUser]);
 
   // State for validation errors
-  const [errors, setErrors] = useState({
-    title: false,
-    description: false,
-    other: [],
-  });
+  const [errors, setErrors] = useState([]);
 
   // Handle form input changes
   const handleChange = (event) => {
@@ -42,13 +39,15 @@ const CreateCourse = () => {
     event.preventDefault();
     try {
       if (!course.title || !course.description) {
-        setErrors((prev) => ({
-          ...prev,
-          title: !course.title ? "Title is required" : false,
-          description: !course.description ? "Description is required" : false,
-        }));
+        const validationErrors = [];
+        if (!course.title)
+          validationErrors.push("Please provide a value for 'Title'.");
+        if (!course.description)
+          validationErrors.push("Please provide a value for 'Description'.");
+        setErrors(validationErrors);
         return;
       }
+
       const payload = {
         title: course.title,
         description: course.description,
@@ -57,13 +56,6 @@ const CreateCourse = () => {
         userId: authUser.id, //if i change to user id it works
       };
       console.log("payload is:", payload);
-
-      // const credentials = {
-      //   userId: authUser.id,
-      //   emailAddress: authUser.emailAddress, //emailAdrress:
-      //   password: authUser.password,
-      // };
-      // console.log("credentials are: ", credentials);
 
       const response = await api(`/courses`, "POST", payload, authUser);
 
@@ -75,7 +67,7 @@ const CreateCourse = () => {
       } else {
         const errorData = await response.json();
         console.error("Error creating course:", errorData);
-        setErrors((prev) => ({ ...prev, other: errorData.errors || [] }));
+        setErrors(errorData.errors || ["An unexpected error occurred"]);
         console.error("Error creating course: ", response);
       }
     } catch (error) {
@@ -83,29 +75,6 @@ const CreateCourse = () => {
     }
     console.log("current auth user:", authUser);
   };
-  // else if (!response.ok) {
-  //   throw new Error("Error creating course");
-  // }
-  // Reset form after successful submission
-  // const newCourse = await response.json();
-  // console.log(newCourse);
-  // navigate(`/courses/${newCourse.id}`);
-  // alert("Course created successfully!");
-  //     if (response.ok) {
-  //       const newCourse = await response.json(); // Get created course data
-  //       console.log(newCourse);
-  //       navigate(`/courses/${newCourse.id}`); // Redirect to the new course page
-  //       alert("Course created successfully!");
-  //     } else {
-  //       // Handle API error
-  //       const errorData = await response.json();
-  //       console.error("Error creating course:", errorData);
-  //       alert("Failed to create course. Please try again.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error creating course:", error);
-  //   }
-  // };
 
   const preventDef = (event) => {
     event.preventDefault();
@@ -116,20 +85,7 @@ const CreateCourse = () => {
     <main>
       <div className="wrap">
         <h2>Create Course</h2>
-        {(errors.title || errors.description || errors.other.length > 0) && (
-          <div className="validation--errors">
-            <h3>Validation Errors</h3>
-            <ul>
-              {errors.title && <li>Please provide a value for "Title"</li>}
-              {errors.description && (
-                <li>Please provide a value for "Description"</li>
-              )}
-              {errors.other.map((error, i) => (
-                <li key={i}>{error}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <>{errors.length > 0 ? <ErrorsDisplay errors={errors} /> : null}</>
 
         <form onSubmit={handleSubmit}>
           <div className="main--flex">
