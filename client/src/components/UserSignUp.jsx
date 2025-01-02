@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useContext, useRef, useState } from "react";
 import { UserContext } from "../context/UserContext";
 import { api } from "../utils/apiHelper";
+import ErrorsDisplay from "./Error";
 
 const UserSignUp = () => {
   //hooks need to be at top of component
@@ -59,57 +60,35 @@ const UserSignUp = () => {
     <main>
       <div className="form--centered">
         <h2>Sign Up</h2>
+        <>{errors.length > 0 ? <ErrorsDisplay errors={errors} /> : null}</>
 
-        <div>
-          {errors.length ? (
-            <div>
-              <div className="validation-errors">
-                <ul>
-                  {errors.map((error, i) => (
-                    <li key={i}>{error}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          ) : null}
-          <form onSubmit={handleSubmit}>
-            <label htmlFor="firstName">First Name</label>
-            <input
-              id="firstName"
-              name="firstName"
-              type="text"
-              ref={firstName}
-            />
-            <label htmlFor="lastName">Last Name</label>
-            <input id="lastName" name="lastName" type="text" ref={lastName} />
-            <label htmlFor="emailAddress">Email Address</label>
-            <input
-              id="emailAddress"
-              name="emailAddress"
-              type="email"
-              ref={emailAddress}
-            />
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              ref={password}
-            />
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="firstName">First Name</label>
+          <input id="firstName" name="firstName" type="text" ref={firstName} />
+          <label htmlFor="lastName">Last Name</label>
+          <input id="lastName" name="lastName" type="text" ref={lastName} />
+          <label htmlFor="emailAddress">Email Address</label>
+          <input
+            id="emailAddress"
+            name="emailAddress"
+            type="email"
+            ref={emailAddress}
+          />
+          <label htmlFor="password">Password</label>
+          <input id="password" name="password" type="password" ref={password} />
 
-            <button className="button" type="submit">
-              Sign up
-            </button>
-            <button className="button button-secondary" onClick={handleCancel}>
-              Cancel
-            </button>
-          </form>
-        </div>
-        <p>
-          Already have a user account? Click here to{" "}
-          <Link to="/signin">sign in</Link>!
-        </p>
+          <button className="button" type="submit">
+            Sign up
+          </button>
+          <button className="button button-secondary" onClick={handleCancel}>
+            Cancel
+          </button>
+        </form>
       </div>
+      <p>
+        Already have a user account? Click here to{" "}
+        <Link to="/signin">sign in</Link>!
+      </p>
     </main>
   );
 };

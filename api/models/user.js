@@ -4,9 +4,9 @@ var bcrypt = require("bcryptjs");
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
+Helper method for defining associations.
+This method is not a part of Sequelize lifecycle.
+The `models/index` file will call this method automatically.
      */
     static associate(models) {
       // define association here
@@ -21,6 +21,9 @@ module.exports = (sequelize, DataTypes) => {
           notNull: {
             msg: "First name required",
           },
+          notEmpty: {
+            msg: "First name required",
+          },
         },
       },
       lastName: {
@@ -28,6 +31,9 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
+            msg: "Last name required",
+          },
+          notEmpty: {
             msg: "Last name required",
           },
         },
@@ -53,9 +59,11 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
         set(val) {
-          //code to hash
-          const hashedPassword = bcrypt.hashSync(val, 10);
-          this.setDataValue("password", hashedPassword); //setting value of password
+          if (val) {
+            //code to hash
+            const hashedPassword = bcrypt.hashSync(val, 10);
+            this.setDataValue("password", hashedPassword); //setting value of password
+          }
         },
       },
     },
@@ -64,7 +72,6 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "User",
     }
   );
-
   //one-to-many association between the User and Course models using the hasMany() method
   User.associate = (models) => {
     User.hasMany(models.Course, {

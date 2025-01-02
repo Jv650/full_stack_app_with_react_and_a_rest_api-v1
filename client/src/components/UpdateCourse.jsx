@@ -3,13 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../utils/apiHelper";
 import ErrorsDisplay from "./Error";
 import { UserContext } from "../context/UserContext";
-import Cookies from "js-cookie";
 
 const UpdateCourse = () => {
   const { id } = useParams(); //get course id from the api
   const navigate = useNavigate();
   const { authUser } = useContext(UserContext);
-
   //state forcourse data
   const [course, setCourse] = useState({
     title: "",
@@ -17,7 +15,13 @@ const UpdateCourse = () => {
     estimatedTime: "",
     materialsNeeded: "",
   });
-  const [errors, setErrors] = useState([]);
+
+  // State for validation errors
+  const [errors, setErrors] = useState({
+    title: false,
+    description: false,
+    other: [],
+  });
 
   //fetch /api/courses/:id from API
   useEffect(() => {
@@ -78,7 +82,8 @@ const UpdateCourse = () => {
   return (
     <div className="wrap">
       <h2>Update Course</h2>
-      {errors.length > 0 && <ErrorsDisplay errors={errors} />}
+      <>{errors.length > 0 ? <ErrorsDisplay errors={errors} /> : null}</>
+
       <form onSubmit={handleSubmit}>
         <div className="main--flex">
           <div>
@@ -103,25 +108,25 @@ const UpdateCourse = () => {
               type="text"
               onChange={handleChange}
             ></textarea>
-            <div>
-              <label htmlFor="estimatedTime">Estimated Time</label>
-              <input
-                id="estimatedTime"
-                name="estimatedTime"
-                type="text"
-                value={course.estimatedTime}
-                onChange={handleChange}
-              />
+          </div>
+          <div>
+            <label htmlFor="estimatedTime">Estimated Time</label>
+            <input
+              id="estimatedTime"
+              name="estimatedTime"
+              type="text"
+              value={course.estimatedTime}
+              onChange={handleChange}
+            />
 
-              <label htmlFor="materialsNeeded">Materials Needed</label>
-              <textarea
-                id="materialsNeeded"
-                name="materialsNeeded"
-                type="text"
-                value={course.materialsNeeded}
-                onChange={handleChange}
-              ></textarea>
-            </div>
+            <label htmlFor="materialsNeeded">Materials Needed</label>
+            <textarea
+              id="materialsNeeded"
+              name="materialsNeeded"
+              type="text"
+              value={course.materialsNeeded}
+              onChange={handleChange}
+            ></textarea>
           </div>
         </div>
         <button className="button" type="submit">
