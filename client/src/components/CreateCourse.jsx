@@ -30,23 +30,23 @@ const CreateCourse = () => {
     // Update course state
     setCourse((prevCourse) => ({ ...prevCourse, [name]: value }));
     // Reset validation error if editing title or description
-    if (name === "title" || name === "description") {
-      setErrors((prevErrors) => ({ ...prevErrors, [name]: false }));
-    }
+    // if (name === "title" || name === "description") {
+    //   setErrors((prevErrors) => ({ ...prevErrors, [name]: false }));
+    // }
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      if (!course.title || !course.description) {
-        const validationErrors = [];
-        if (!course.title)
-          validationErrors.push("Please provide a value for 'Title'.");
-        if (!course.description)
-          validationErrors.push("Please provide a value for 'Description'.");
-        setErrors(validationErrors);
-        return;
-      }
+      // if (!course.title || !course.description) {
+      //   const validationErrors = [];
+      //   if (!course.title)
+      //     validationErrors.push("Please provide a value for 'Title'.");
+      //   if (!course.description)
+      //     validationErrors.push("Please provide a value for 'Description'.");
+      //   setErrors(validationErrors);
+      //   return;
+      // }
 
       const payload = {
         title: course.title,
@@ -64,14 +64,17 @@ const CreateCourse = () => {
         // console.log("newcourse data:", newCourse);
         // console.log("Course created successfully!", response);
         navigate("/"); // Redirect to the new course page
-      } else {
+      } else if (response.status === 400) {
         const errorData = await response.json();
         console.error("Error creating course:", errorData);
-        setErrors(errorData.errors || ["An unexpected error occurred"]);
+        setErrors(errorData.errors || ["Vlaidation failed"]);
         console.error("Error creating course: ", response);
+      } else {
+        setErrors(["An unexpected error occurred"]);
       }
     } catch (error) {
       console.error("An error occurred: ", error);
+      setErrors(["An unexpected error occurred"]);
     }
     console.log("current auth user:", authUser);
   };
@@ -85,7 +88,16 @@ const CreateCourse = () => {
     <main>
       <div className="wrap">
         <h2>Create Course</h2>
-        <>{errors.length > 0 ? <ErrorsDisplay errors={errors} /> : null}</>
+        {errors.length > 0 && (
+          <div className="validation--errors">
+            <h3>Validation Errors</h3>
+            <ul>
+              {errors.map((error, i) => (
+                <li key={i}>{error}</li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="main--flex">
