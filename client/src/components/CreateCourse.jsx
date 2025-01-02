@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { api } from "../utils/apiHelper";
-import ErrorsDisplay from "./Error";
 
 const CreateCourse = () => {
   const navigate = useNavigate();
